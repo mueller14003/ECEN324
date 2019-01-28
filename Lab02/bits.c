@@ -232,7 +232,7 @@ int copyLSB(int x) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  return 2;
+  return (x >> n) & ~((1 << 31) >> n << 1);
 }
 /*
  * bitCount - returns count of number of 1's in word
