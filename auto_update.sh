@@ -7,5 +7,4 @@ if git push; then
 else
 	git push --force-with-lease
 fi
-git pull
-read 
+git pull --allow-unrelated-histories
