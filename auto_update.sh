@@ -8,3 +8,4 @@ else
 	git push --force-with-lease
 fi
 git pull upstream master --allow-unrelated-histories
+read 
