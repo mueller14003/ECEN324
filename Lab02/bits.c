@@ -38,7 +38,7 @@ team_struct team =
       or, ID1+ID2 where ID1 is the login ID of the first team member
       and ID2 is the login ID of the second team member.
        Example: joestudent+zmename */
-    "kylemueller+", 
+    "kylemueller+ajindo",
    /* Student name 1: Replace with the name of first team member */
    "Kyle Mueller",
    /* Login ID 1: Replace with the login ID of first team member */
@@ -166,9 +166,9 @@ NOTES:
  *   Rating: 1
  */
 int bitNor(int x, int y) {
-           // This is the literal equivalent of the bitwise nor operator
-           // using the ~ and & operators       
-           return ~x & ~y;
+   // This is the literal equivalent of the bitwise nor operator
+   // using the ~ and & operators       
+   return ~x & ~y;
 }
 /* 
  * bitXor - x^y using only ~ and & 
@@ -221,7 +221,7 @@ int copyLSB(int x) {
    // the originally least significant bit to the most significant bit. Shifting this value
    // to the right 31 times will either fill the values with 1's or 0's. This is due to the
    // fact that we are using an arithmetic right shift.
-   return ((x << 31) >> 31);
+   return (x << 31) >> 31;
 }
 /* 
  * logicalShift - shift x to the right by n, using a logical shift
@@ -232,6 +232,7 @@ int copyLSB(int x) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
+  // !!!!!!!!!!
   return (x >> n) & ~((1 << 31) >> n << 1);
 }
 /*
@@ -242,6 +243,7 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
+  // ??????????
   return 2;
 }
 /* 
@@ -252,7 +254,8 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-  return 2;
+  // !!!!!!!!!!
+  return 1 & (~((~x + 1) | x) >> 31);
 }
 /* 
  * leastBitPos - return a mask that marks the position of the
@@ -263,7 +266,8 @@ int bang(int x) {
  *   Rating: 4 
  */
 int leastBitPos(int x) {
-  return 2;
+  // !!!!!!!!!!
+  return (~x + 1) & x;
 }
 /* 
  * TMax - return maximum two's complement integer 
@@ -287,7 +291,8 @@ int tmax(void) {
  *   Rating: 3
  */
 int isNonNegative(int x) {
-   return !(x >> 31);
+  // !!!!!!!!!!
+  return !(x >> 31);
 }
 /* 
  * isGreater - if x > y  then return 1, else return 0 
@@ -297,7 +302,9 @@ int isNonNegative(int x) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-  return 2;
+  // !!!!!!!!!!
+  int nx = ~x;
+  return !!(((nx & y) | (~(x + ~y) & (nx | y))) >> 31);
 }
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
@@ -308,7 +315,9 @@ int isGreater(int x, int y) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-   return (x >> (2 << n));
+  // !!!!!!!!!!
+  int fix = ((1 << n) + ~0) & (x >> 31);
+  return (x + fix) >> n;
 }
 /* 
  * abs - absolute value of x (except returns TMin for TMin)
@@ -318,8 +327,9 @@ int divpwr2(int x, int n) {
  *   Rating: 4
  */
 int abs(int x) {
-   int s = x >> 31;
-   return (1 + ~s) + (x ^ s);
+  // !!!!!!!!!!
+  int s = x >> 31;
+  return (1 + ~s) + (x ^ s);
 }
 /* 
  * addOK - Determine if can compute x+y without overflow
@@ -330,5 +340,7 @@ int abs(int x) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-  return 2;
+  // !!!!!!!!!!
+  int sum = x + y;
+  return !(((sum ^ x) & (sum ^ y)) >> 31);
 }
