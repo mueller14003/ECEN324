@@ -197,10 +197,10 @@ int bitXor(int x, int y) {
  */
 int isNotEqual(int x, int y) {
    // The xor operator already checks for equality. However, we needed to 
-   // convert the answer into a 1 or a 0. For this reason, we and the value
-   // with 1.
+   // convert the answer into a 1 or a 0. For this reason, we use two of
+   // the ! operators.
 
-   return 1 & (x ^ y);
+   return !!(x ^ y);
 }
 /* 
  * getByte - Extract byte n from word x
