@@ -38,7 +38,7 @@ team_struct team =
       or, ID1+ID2 where ID1 is the login ID of the first team member
       and ID2 is the login ID of the second team member.
        Example: joestudent+zmename */
-    "kylemueller+ajindo",
+    "kylemueller+ajindo", 
    /* Student name 1: Replace with the name of first team member */
    "Kyle Mueller",
    /* Login ID 1: Replace with the login ID of first team member */
@@ -243,8 +243,21 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-  // ??????????
-  return 2;
+  // !!!!!!!!!!
+  int n1 = 0x11;
+  int n3 = 0x0F;
+  n1 += (n1 << 8);
+  n1 += (n1 << 16);
+  n3 += (n3 << 8);
+  n3 += (n3 << 16);
+
+  x = (x & n1) + ((x >> 1) & n1) + ((x >> 2) & n1) + ((x >> 3) & n1);
+
+  x = (x + (x >> 4)) & n3;
+  x += (x >> 8);
+  x += (x >> 16);
+        
+  return x & 0x3F;
 }
 /* 
  * bang - Compute !x without using !
