@@ -5,7 +5,11 @@
 * Authors:
 *    Kyle Mueller, Atsushi Jindo
 * Summary:
-*    descriptive text
+*    This program implements a number of operators and functions, using
+*    only select bitwise operators. The functions and operators would
+*    be trivial to implement using regular code, but they become much
+*    more challenging when implementing them in a very limited number
+*    of operators.
 ***********************************************************************/
 
 /* 
@@ -167,7 +171,8 @@ NOTES:
  */
 int bitNor(int x, int y) {
    // This is the literal equivalent of the bitwise nor operator
-   // using the ~ and & operators       
+   // using the ~ and & operators.
+
    return ~x & ~y;
 }
 /* 
@@ -178,8 +183,9 @@ int bitNor(int x, int y) {
  *   Rating: 2
  */
 int bitXor(int x, int y) {
-   // Using the definition of the + operator, we devised a simple, yet effective
-   // way to implement the bitwise xor operator, using only ~ and &.
+   // Using the definition of the | operator, we devised a simple, yet 
+   // effective way to implement the bitwise xor operator, using only ~ and &.
+
    return ~(x & y) & ~(~x & ~y);
 }
 /* 
@@ -190,9 +196,11 @@ int bitXor(int x, int y) {
  *   Rating: 2
  */
 int isNotEqual(int x, int y) {
-   // The xor operator already checks for equality. However, we needed to convert
-   // the answer into a 1 or a 0. For this reason, we used two of the ! operators.
-   return !!(x ^ y);
+   // The xor operator already checks for equality. However, we needed to 
+   // convert the answer into a 1 or a 0. For this reason, we and the value
+   // with 1.
+
+   return 1 & (x ^ y);
 }
 /* 
  * getByte - Extract byte n from word x
@@ -203,10 +211,12 @@ int isNotEqual(int x, int y) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-   // Shifting n to the left 3 times multiplies the value by 8. Shifting x to the right
-   // n * 8 times isolates the desired byte in the least significant byte. Using the &
-   // operator with the last value and the hexadecimal value 0xff 'ands' the desired byte
-   // with 1's and the rest of the bytes with 0's, yielding the desired outcome.
+   // Shifting n to the left 3 times multiplies the value by 8. Shifting x to
+   // the right n * 8 times isolates the desired byte in the least significant 
+   // byte. Using the & operator with the last value and the hexadecimal value 
+   // 0xff 'ands' the desired byte with 1's and the rest of the bytes with 0's,
+   // yielding the desired outcome.
+
    return (x >> (n << 3)) & 0xFF;
 }
 /* 
@@ -217,10 +227,12 @@ int getByte(int x, int n) {
  *   Rating: 2
  */
 int copyLSB(int x) {
-   // This function was fairly simple to implement. Shifting x to the left 31 times moves
-   // the originally least significant bit to the most significant bit. Shifting this value
-   // to the right 31 times will either fill the values with 1's or 0's. This is due to the
-   // fact that we are using an arithmetic right shift.
+   // This function was fairly simple to implement. Shifting x to the left 31
+   // times moves the originally least significant bit to the most significant
+   // bit. Shifting this value to the right 31 times will either fill the values 
+   // with 1's or 0's. This is due to the fact that we are using an arithmetic 
+   // right shift.
+
    return (x << 31) >> 31;
 }
 /* 
@@ -232,8 +244,14 @@ int copyLSB(int x) {
  *   Rating: 3 
  */
 int logicalShift(int x, int n) {
-  // !!!!!!!!!!
-  return (x >> n) & ~((1 << 31) >> n << 1);
+  // To implement a logical right shift, first an arithmetic right shift must be
+  // performed. Next, the resulting value from the arithmetic right shift is anded
+  // with a mask. The mask will have the appropriate amount of zeros in the most 
+  // significant bits. The mask was created in order to change any possible 1's 
+  // that resulted from the arithmetic right shift to 0's.
+  int mask = ~((1 << 31) >> n << 1);
+
+  return (x >> n) & mask;
 }
 /*
  * bitCount - returns count of number of 1's in word
@@ -243,20 +261,26 @@ int logicalShift(int x, int n) {
  *   Rating: 4
  */
 int bitCount(int x) {
-  // !!!!!!!!!!
+  // Two 8 bit masks are initially created. The masks are expanded to cover 32 bits.
+  // The first mask is applied to the input value by summing x shifted right 0-3 
+  // times, each anded with the first mask separately. The resulting value is then 
+  // added to itself shifted right 4 times, and anded with the second mask. The value
+  // stored in x is then copied through the rest of the 32 bits. The final result is 
+  // anded with 0x3f to isolate the 6 least significant bits before being returned.
   int n1 = 0x11;
   int n3 = 0x0F;
+
   n1 += (n1 << 8);
   n1 += (n1 << 16);
   n3 += (n3 << 8);
   n3 += (n3 << 16);
 
   x = (x & n1) + ((x >> 1) & n1) + ((x >> 2) & n1) + ((x >> 3) & n1);
-
+  
   x = (x + (x >> 4)) & n3;
   x += (x >> 8);
-  x += (x >> 16);
-        
+  x += (x >> 16);     
+  
   return x & 0x3F;
 }
 /* 
@@ -267,7 +291,10 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-  // !!!!!!!!!!
+  // An or operation is performed with x and the inverse two's complement of x. This
+  // value is negated, and shifted right 31 times. The value is then anded with 1 and 
+  // returned.
+
   return 1 & (~((~x + 1) | x) >> 31);
 }
 /* 
@@ -279,7 +306,9 @@ int bang(int x) {
  *   Rating: 4 
  */
 int leastBitPos(int x) {
-  // !!!!!!!!!!
+  // A mask is created by bit-flipping the value of x and adding one. The mask is
+  // anded with x and returned.
+
   return (~x + 1) & x;
 }
 /* 
@@ -289,11 +318,13 @@ int leastBitPos(int x) {
  *   Rating: 1
  */
 int tmax(void) {
-   // Since we are dealing with two's complement, and we desire the largest possible integer, we
-   // must keep the value of the most significant bit at 0, while filling the rest of the bits with
-   // 1's. To accomplish this, one can take the value of 1, and shift it left 31 times, resulting in
-   // the value of 0x80000000. Then, one can flip the bits, resulting in the value 0x7fffffff, the
-   // largest 2's complement value (using 32 bits).
+   // Since we are dealing with two's complement, and we desire the largest possible
+   // integer, we must keep the value of the most significant bit at 0, while filling
+   // the rest of the bits with 1's. To accomplish this, one can take the value of 1,
+   // and shift it left 31 times, resulting in the value of 0x80000000. Then, one can
+   // flip the bits, resulting in the value 0x7fffffff, the largest 2's complement 
+   // value (using 32 bits).
+
    return ~(1 << 31);
 }
 /* 
@@ -304,7 +335,9 @@ int tmax(void) {
  *   Rating: 3
  */
 int isNonNegative(int x) {
-  // !!!!!!!!!!
+  // The most significant bit of x is isolated by shifting right 31 times. Then the 
+  // result is negated and returned.
+
   return !(x >> 31);
 }
 /* 
@@ -315,9 +348,13 @@ int isNonNegative(int x) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-  // !!!!!!!!!!
+  // The value of bit-flipped y is added to x and then bit-flipped. This value is 
+  // anded with an or of bit-flipped x and y. An or operation is then performed 
+  // with this value and bit-flipped x anded with y. The value is then shifted 
+  // right 31 times, and finally anded with 1 before being returned.
   int nx = ~x;
-  return !!(((nx & y) | (~(x + ~y) & (nx | y))) >> 31);
+
+  return 1 & (((nx & y) | (~(x + ~y) & (nx | y))) >> 31);
 }
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
@@ -328,8 +365,10 @@ int isGreater(int x, int y) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-  // !!!!!!!!!!
+  // A fix is created to compensate for two's complement. The value of x is added 
+  // to this, and then shifted right n times. This value is then returned.
   int fix = ((1 << n) + ~0) & (x >> 31);
+
   return (x + fix) >> n;
 }
 /* 
@@ -340,8 +379,10 @@ int divpwr2(int x, int n) {
  *   Rating: 4
  */
 int abs(int x) {
-  // !!!!!!!!!!
+  // A variable is created that stores the sign of x. Then one is added to the 
+  // bit-flipped sign. This value is then added to x xor the sign, and returned.
   int s = x >> 31;
+
   return (1 + ~s) + (x ^ s);
 }
 /* 
@@ -353,7 +394,11 @@ int abs(int x) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-  // !!!!!!!!!!
+  // A variable is created to store the sum of x and y. An xor is performed 
+  // between the sum and x and y respectively, and the values are anded together.
+  // This value is then shifted to the right 31 times. Then the value is inversed 
+  // and returned.
   int sum = x + y;
+
   return !(((sum ^ x) & (sum ^ y)) >> 31);
 }
